@@ -1,4 +1,5 @@
-# Hotstreak
+
+# <img src="./hotstreak.png"/>
 
 Hotstreak is lightweight library for creating a certain type of rate limiting solution.
 
