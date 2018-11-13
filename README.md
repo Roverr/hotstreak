@@ -1,5 +1,7 @@
 
 # <img src="./hotstreak.png"/>
+[ ![Codeship Status for Roverr/hotstreak](https://app.codeship.com/projects/498c53d0-c99b-0136-5bad-7e8852079539/status?branch=master)](https://app.codeship.com/projects/314997)
+
 
 Hotstreak is lightweight library for creating a certain type of rate limiting solution.
 
