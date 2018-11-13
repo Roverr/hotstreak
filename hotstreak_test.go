@@ -31,6 +31,18 @@ func TestActivation(t *testing.T) {
 		<-time.After(time.Second)
 		assert.False(t, hotstreak.IsActive())
 	})
+
+	t.Run("Should not deactivate if any hit has been made in the activation time", func(t *testing.T) {
+		hotstreak := New(Config{ActiveWait: time.Millisecond * 500})
+		hotstreak.Activate()
+		assert.True(t, hotstreak.Hit().IsActive())
+		assert.Equal(t, hotstreak.counter, 1)
+		<-time.After(time.Millisecond * 600)
+		assert.True(t, hotstreak.IsActive())
+		assert.Equal(t, hotstreak.counter, 0)
+		<-time.After(time.Millisecond * 600)
+		assert.False(t, hotstreak.IsActive())
+	})
 }
 
 func TestHitting(t *testing.T) {
