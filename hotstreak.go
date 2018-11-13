@@ -54,6 +54,7 @@ func (hs *Hotstreak) coolDown() {
 	hs.mux.Lock()
 	defer hs.mux.Unlock()
 	hs.hot = false
+	hs.counter = 0
 }
 
 func (hs *Hotstreak) dieSlowly() {
