@@ -68,7 +68,6 @@ func TestHitting(t *testing.T) {
 func TestHot(t *testing.T) {
 	t.Run("Should be able to cool down after hot wait time", func(t *testing.T) {
 		hotstreak := New(Config{Limit: 2, HotWait: time.Millisecond * 500})
-
 		assert.True(t, hotstreak.Activate().Hit().Hit().IsHot())
 		assert.True(t, hotstreak.IsActive())
 		<-time.After(time.Second)

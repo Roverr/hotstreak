@@ -9,10 +9,14 @@ It provides the tools needed for rate limiting, but does not try to solve everyt
 
 # How
 
-Hotstreak uses 2 terms `Active` and `Hot`. 
-While it's active, you can call `Hit` to increase the inner counter
-After you call `Hit` for a configurable amount of times, the streak will become `Hot`. 
-`Hot` means that only deactivation can stop the service from being `Active` for a configurable amount of time.
+Hotstreak uses 2 terms `Active` and `Hot`. </br>
+While it's active, you can call `Hit` to increase the inner counter.</br>
+After you call `Hit` for a configurable amount of times, the streak will become `Hot`.</br>
+`Hot` means that only deactivation can stop the service from being `Active` for a configurable amount of time.</br>
+After a configurable time, if the streak has not gotten `Hot`, it will be deactivated, if no hits were called in that time period.
+
+
+See [docs for more info](https://godoc.org/github.com/Roverr/hotstreak).
 
 # Example
 

@@ -19,9 +19,9 @@ type Hotstreak struct {
 
 // Config is the structure of the configuration that can be injected to the lib
 type Config struct {
-	Limit      int
-	HotWait    time.Duration
-	ActiveWait time.Duration
+	Limit      int           // Describes how many times we have to hit before a streak becomes hot
+	HotWait    time.Duration // Describes the amount of time we are waiting before declaring a cool down
+	ActiveWait time.Duration // Describes the amount of time we are waiting to check on a streak being active
 }
 
 var (
@@ -67,12 +67,13 @@ func (hs *Hotstreak) dieSlowly() {
 			return
 		}
 	case <-time.After(hs.ActiveWait):
-		if hs.hot {
-			go hs.dieSlowly()
-			return
-		}
 		hs.mux.Lock()
 		defer hs.mux.Unlock()
+		if hs.hot || hs.counter > 0 {
+			go hs.dieSlowly()
+			hs.counter = 0
+			return
+		}
 		hs.active = false
 	}
 }
