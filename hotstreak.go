@@ -27,6 +27,8 @@ type Config struct {
 var (
 	// DEACTIVATED - Status sign for the streak getting deactivated
 	DEACTIVATED uint8
+	// ACTIVATED - Status sign for the streak getting activated
+	ACTIVATED uint8 = 1
 )
 
 // New creates a new instance of Hotstreak
@@ -61,12 +63,9 @@ func (hs *Hotstreak) dieSlowly() {
 	if hs == nil {
 		return
 	}
-	var signal uint8
 	select {
-	case signal = <-hs.notifier:
-		if signal == DEACTIVATED {
-			return
-		}
+	case <-hs.notifier:
+		return
 	case <-time.After(hs.ActiveWait):
 		hs.mux.Lock()
 		defer hs.mux.Unlock()
@@ -101,6 +100,9 @@ func (hs *Hotstreak) Hit() *Hotstreak {
 func (hs *Hotstreak) Activate() *Hotstreak {
 	if hs == nil {
 		return nil
+	}
+	if hs.active {
+		hs.notifier <- ACTIVATED
 	}
 	hs.active = true
 	go hs.dieSlowly()
