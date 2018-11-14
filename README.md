@@ -1,6 +1,6 @@
 
 # <img src="./hotstreak.png"/>
-[ ![Codeship Status for Roverr/hotstreak](https://app.codeship.com/projects/498c53d0-c99b-0136-5bad-7e8852079539/status?branch=master)](https://app.codeship.com/projects/314997)
+[ ![Codeship Status for Roverr/hotstreak](https://app.codeship.com/projects/498c53d0-c99b-0136-5bad-7e8852079539/status?branch=master)](https://app.codeship.com/projects/314997)[![Go Report Card](https://goreportcard.com/badge/github.com/Roverr/hotstreak)](https://goreportcard.com/report/github.com/Roverr/hotstreak)
 
 
 Hotstreak is lightweight library for creating a certain type of rate limiting solution.
