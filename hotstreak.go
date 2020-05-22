@@ -7,21 +7,20 @@ import (
 
 // Hotstreak is the main structure of the library
 type Hotstreak struct {
-	active     bool
-	hot        bool
-	mux        *sync.Mutex
-	counter    int
-	Limit      int
-	HotWait    time.Duration
-	ActiveWait time.Duration
-	notifier   chan uint8
+	active   bool
+	hot      bool
+	mux      *sync.Mutex
+	counter  int
+	config   Config
+	notifier chan uint8
 }
 
 // Config is the structure of the configuration that can be injected to the lib
 type Config struct {
-	Limit      int           // Describes how many times we have to hit before a streak becomes hot
-	HotWait    time.Duration // Describes the amount of time we are waiting before declaring a cool down
-	ActiveWait time.Duration // Describes the amount of time we are waiting to check on a streak being active
+	Limit        int           // Describes how many times we have to hit before a streak becomes hot
+	HotWait      time.Duration // Describes the amount of time we are waiting before declaring a cool down
+	ActiveWait   time.Duration // Describes the amount of time we are waiting to check on a streak being active
+	AlwaysActive bool          // Describes if the streak can deactivate or not
 }
 
 var (
@@ -45,14 +44,22 @@ func New(config Config) *Hotstreak {
 	if activeWait == 0 {
 		activeWait = time.Minute * 5
 	}
-	return &Hotstreak{Limit: limit, HotWait: hotwait, ActiveWait: activeWait, mux: &sync.Mutex{}, notifier: make(chan uint8)}
+	return &Hotstreak{
+		config: Config{
+			Limit:        limit,
+			HotWait:      hotwait,
+			ActiveWait:   activeWait,
+			AlwaysActive: config.AlwaysActive,
+		},
+		mux:      &sync.Mutex{},
+		notifier: make(chan uint8)}
 }
 
 func (hs *Hotstreak) coolDown() {
 	if hs == nil {
 		return
 	}
-	time.Sleep(hs.HotWait)
+	time.Sleep(hs.config.HotWait)
 	hs.mux.Lock()
 	defer hs.mux.Unlock()
 	hs.hot = false
@@ -66,7 +73,10 @@ func (hs *Hotstreak) dieSlowly() {
 	select {
 	case <-hs.notifier:
 		return
-	case <-time.After(hs.ActiveWait):
+	case <-time.After(hs.config.ActiveWait):
+		if hs.config.AlwaysActive {
+			return
+		}
 		hs.mux.Lock()
 		defer hs.mux.Unlock()
 		if hs.hot || hs.counter > 0 {
@@ -89,7 +99,7 @@ func (hs *Hotstreak) Hit() *Hotstreak {
 		return hs
 	}
 	hs.counter++
-	if hs.counter >= hs.Limit {
+	if hs.counter >= hs.config.Limit {
 		hs.hot = true
 		go hs.coolDown()
 	}
