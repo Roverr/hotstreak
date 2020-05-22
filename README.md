@@ -21,6 +21,7 @@ After a configurable time, if no `Hit` were made at all, it deactivates.
 * `Limit`      - int           - _Describes how many times we have to hit before a streak becomes hot_
 * `HotWait`    - time.Duration - _Describes the amount of time we are waiting before declaring a cool down_
 * `ActiveWait` - time.Duration - _Describes the amount of time we are waiting to check on a streak being active_
+* `AlwaysActive` - boolean - _Describes if the streak can deactivate or should stay active forever_
 
 ### Chainability
 Most commands are chainable to allow easier handling.

@@ -12,9 +12,9 @@ func TestCreate(t *testing.T) {
 	assert.False(t, hotstreak.IsActive())
 	assert.False(t, hotstreak.IsHot())
 	assert.Equal(t, hotstreak.counter, 0)
-	assert.Equal(t, hotstreak.Limit, 20)
-	assert.Equal(t, hotstreak.ActiveWait, time.Minute*5)
-	assert.Equal(t, hotstreak.HotWait, time.Minute*5)
+	assert.Equal(t, hotstreak.config.Limit, 20)
+	assert.Equal(t, hotstreak.config.ActiveWait, time.Minute*5)
+	assert.Equal(t, hotstreak.config.HotWait, time.Minute*5)
 }
 
 func TestActivation(t *testing.T) {
@@ -22,14 +22,6 @@ func TestActivation(t *testing.T) {
 		hotstreak := New(Config{})
 		hotstreak.Activate()
 		assert.True(t, hotstreak.IsActive())
-	})
-
-	t.Run("Should be able to end activation after wait time", func(t *testing.T) {
-		hotstreak := New(Config{ActiveWait: time.Millisecond * 500})
-		hotstreak.Activate()
-		assert.True(t, hotstreak.IsActive())
-		<-time.After(time.Second)
-		assert.False(t, hotstreak.IsActive())
 	})
 
 	t.Run("Should not deactivate if any hit has been made in the activation time", func(t *testing.T) {
@@ -42,6 +34,24 @@ func TestActivation(t *testing.T) {
 		assert.Equal(t, hotstreak.counter, 0)
 		<-time.After(time.Millisecond * 600)
 		assert.False(t, hotstreak.IsActive())
+	})
+}
+
+func TestDeactivation(t *testing.T) {
+	t.Run("Should be able to end activation after wait time", func(t *testing.T) {
+		hotstreak := New(Config{ActiveWait: time.Millisecond * 500})
+		hotstreak.Activate()
+		assert.True(t, hotstreak.IsActive())
+		<-time.After(time.Second)
+		assert.False(t, hotstreak.IsActive())
+	})
+
+	t.Run("Should not be able to end activation after wait time if active set to always", func(t *testing.T) {
+		hotstreak := New(Config{ActiveWait: time.Millisecond * 500, AlwaysActive: true})
+		hotstreak.Activate()
+		assert.True(t, hotstreak.IsActive())
+		<-time.After(time.Second)
+		assert.True(t, hotstreak.IsActive())
 	})
 }
 
